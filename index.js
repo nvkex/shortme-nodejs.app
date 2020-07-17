@@ -3,7 +3,7 @@ const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
 const yup = require('yup');
-const {nanoid} = require('nanoid');
+const { nanoid } = require('nanoid');
 const admin = require('firebase-admin');
 
 const app = express();
@@ -20,8 +20,8 @@ admin.initializeApp({
 // Firestore Database
 var db = admin.database();
 var ref = db.ref("short-me");
-ref.once("value", function(snapshot) {
-    console.log(snapshot.val());
+ref.once("value", function (snapshot) {
+    console.log("connected");
 })
 
 
@@ -36,8 +36,8 @@ app.use(cors());
 // Body parser
 app.use(express.json());
 
-// Static serve
-app.use(express.static('./public'));
+// // Static serve
+// app.use(express.static('./public'));
 
 // Input Schema
 const schema = yup.object().shape({
@@ -47,73 +47,102 @@ const schema = yup.object().shape({
 
 /* ROUTES */
 
-app.get('/', (req,res) => {
+app.get('/', (req, res) => {
     res.json({
         message: 'short.me - Shorten your URLs'
     });
 });
 
-app.get('/url/:id', (req,res) => {
-    // Get a short URL by ID
+// Return URL from id
+app.get('/:id', async (req, res) => {
+
+    const { id: slug } = req.params;
+    try {
+        var exists = false;
+        var url = "";
+        await ref.once("value", (snapshot) => {
+            if (snapshot.val().urls[slug]) {
+                url = snapshot.val().urls[slug].url;
+                exists = true;
+            }
+        });
+
+        if (exists) {
+            res.json({ url });
+        }
+        else {
+            res.json({
+                "error": "URL not found"
+            })
+        }
+
+    }
+    catch (error) {
+        res.json({
+            error
+        })
+    }
 });
 
-app.get('/:id', (req,res) => {
-    // Redirect to URL
-});
+// Create a short URL
+app.post('/url', async (req, res, next) => {
 
-app.post('/url', async (req,res, next) => {
-    // Create a short URL
-    let {slug, url} = req.body;
-    try{
+    let { slug, url } = req.body;
+    try {
+        let exists = false;
 
         // If slug is not provided
-        if(!slug){
-            slug = nanoid(5);
+        if (!slug) {
+            slug = nanoid(6);
         }
 
-        // Case-insensiive
-        slug = slug.toLowerCase();
-
-        const secret = nanoid(10).toLowerCase();
-        const newUrl = {
-            slug,
-            url,
-            secret
-        }
+        // Check if slug exists
+        await ref.once("value", (snapshot) => {
+            if (snapshot.val().urls[slug]) {
+                exists = true;
+            }
+        });
 
         // Validate params
         await schema.validate({
-            slug, 
+            slug,
             url,
         });
 
-        ref.child('urls').child(slug).set({
+        const newUrl = {
             slug,
             url
-        });
-        
-        // Send data
-        res.json({
-            slug,
-            url
-        });
+        }
+
+        if (!exists) {
+            await ref.child('urls').child(slug).set(newUrl);
+
+            // Send data
+            res.json(newUrl);
+        }
+        else {
+            res.json({
+                "error": "Slug in use!"
+            })
+        }
+
     }
-    catch(error){
+    catch (error) {
         next(error);
     }
 });
 
 // Errors
 app.use((error, req, res, next) => {
-    if(error.status){
+    if (error.status) {
         res.status(error.status);
     }
-    else{
+    else {
         res.status(500);
     }
     res.json({
         message: error.message,
-        stack: process.env.NODE_ENV === 'production' ? 'nice': error.stack,
+        stack: process.env.NODE_ENV === 'production' ? 'nice' : error.stack,
     })
 })
 
