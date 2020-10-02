@@ -8,7 +8,9 @@
 ## Routes
 ### 1. Check connection
 **Method** : `GET`
+
 **URL** : `https://nvkex-short-me.herokuapp.com/`
+
 **Auth Required** : `false`
 
 #### Response
@@ -19,8 +21,11 @@
 ```
 ### 2. Shorten URL
 **Method** : `POST`
+
 **URL** : `https://nvkex-short-me.herokuapp.com/url`
+
 **Auth Required** : `false`
+
 #### Body
 ```json
 {
@@ -28,7 +33,7 @@
     "slug" : ""
 }
 ```
-**Note** : `slug` is an optional key.
+*Note : `slug` is an optional key. If not provided, it will be auto generated.*
 
 #### Response
 ```json
@@ -40,7 +45,9 @@
 
 ### 2. Get full URL from slug
 **Method** : `GET`
+
 **URL** : `https://nvkex-short-me.herokuapp.com/:slug`
+
 **Auth Required** : `false`
 
 #### Response
