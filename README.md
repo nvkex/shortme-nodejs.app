@@ -7,7 +7,7 @@
 
 ## Routes
 ### 1. Check connection
-**Method** : `GET`
+**Method** :  <a style="color:red">GET</a>
 
 **URL** : `https://nvkex-short-me.herokuapp.com/`
 
@@ -20,7 +20,7 @@
 }
 ```
 ### 2. Shorten URL
-**Method** : `POST`
+**Method** :  <a style="color:blue">POST</a>
 
 **URL** : `https://nvkex-short-me.herokuapp.com/url`
 
@@ -44,7 +44,7 @@
 ```
 
 ### 2. Get full URL from slug
-**Method** : `GET`
+**Method** : <a style="color:red">GET</a>
 
 **URL** : `https://nvkex-short-me.herokuapp.com/:slug`
 
