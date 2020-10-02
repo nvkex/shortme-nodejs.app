@@ -2,7 +2,10 @@ const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
 const helmet = require('helmet');
-const { nanoid } = require('nanoid');
+const mongoose = require('mongoose');
+const dotenv = require('dotenv').config();
+const indexRouter = require('./routes/index');
+
 
 const PORT = process.env.PORT || 1337;
 
@@ -27,16 +30,16 @@ mongoose.connect(process.env.MONGODB_URL, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 })
-.then(res => {
-    console.log('mongoDB connected to ' + res.connection.host);
-})
-.catch(e => {
-    console.log(e);
-})
+    .then(res => {
+        console.log('mongoDB connected to ' + res.connection.host);
+    })
+    .catch(e => {
+        console.log(e);
+    })
 
 /* ROUTES */
 
-app.get('/', indexRouter);
+app.use('/', indexRouter);
 
 // Errors
 app.use((error, req, res, next) => {
