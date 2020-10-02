@@ -1,3 +1,6 @@
+const { nanoid } = require('nanoid');
+const Url = require('../models/Url');
+
 exports.checkConnection = (req, res) => {
     res.json({
         message: 'short.me - Shorten your URLs'
@@ -11,12 +14,16 @@ exports.getURL = async (req, res) => {
     try {
         var exists = false;
         var url = "";
-        await ref.once("value", (snapshot) => {
-            if (snapshot.val().urls[slug]) {
-                url = snapshot.val().urls[slug].url;
-                exists = true;
-            }
-        });
+        Url.find({ slug })
+            .then(data => {
+                if (data.slug) {
+                    url = data.url;
+                    exists = true;
+                }
+            })
+            .catch(err => {
+                console.log(err);
+            })
 
         if (exists) {
             res.json({ url });
@@ -26,7 +33,6 @@ exports.getURL = async (req, res) => {
                 "error": "URL not found"
             })
         }
-
     }
     catch (error) {
         res.json({
@@ -36,11 +42,11 @@ exports.getURL = async (req, res) => {
 };
 
 // Create a short URL
-exports.shortenURL = async (req, res, next) => {
+exports.shortenURL = (req, res) => {
 
-    let { slug, url } = req.body;
+    var { slug, url } = req.body;
     try {
-        let exists = false;
+        var exists = false;
 
         // If slug is not provided
         if (!slug) {
@@ -48,17 +54,12 @@ exports.shortenURL = async (req, res, next) => {
         }
 
         // Check if slug exists
-        await ref.once("value", (snapshot) => {
-            if (snapshot.val().urls[slug]) {
-                exists = true;
-            }
-        });
-
-        // Validate params
-        await schema.validate({
-            slug,
-            url,
-        });
+        Url.find({ slug })
+            .then(data => {
+                if (data.slug) {
+                    exists = true;
+                }
+            })
 
         const newUrl = {
             slug,
@@ -66,10 +67,13 @@ exports.shortenURL = async (req, res, next) => {
         }
 
         if (!exists) {
-            await ref.child('urls').child(slug).set(newUrl);
-
-            // Send data
-            res.json(newUrl);
+            Url.insertOne({ slug })
+                .then(data => {
+                    res.json(newUrl);
+                })
+                .catch(err => {
+                    console.log(err);
+                })            
         }
         else {
             res.json({
