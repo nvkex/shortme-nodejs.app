@@ -11,28 +11,25 @@ exports.checkConnection = (req, res) => {
 exports.getURL = async (req, res) => {
 
     const { id: slug } = req.params;
+
+    console.log(slug)
+
     try {
-        var exists = false;
-        var url = "";
-        Url.find({ slug })
+        Url.findOne({ slug })
             .then(data => {
-                if (data.slug) {
-                    url = data.url;
-                    exists = true;
+                if (data) {
+                    res.json({ url: data.url });
                 }
+                else {
+                    res.json({
+                        "error": "URL not found"
+                    })
+                }
+
             })
             .catch(err => {
                 console.log(err);
             })
-
-        if (exists) {
-            res.json({ url });
-        }
-        else {
-            res.json({
-                "error": "URL not found"
-            })
-        }
     }
     catch (error) {
         res.json({
@@ -67,13 +64,13 @@ exports.shortenURL = (req, res) => {
         }
 
         if (!exists) {
-            Url.insertOne({ slug })
+            Url.create({ slug, url })
                 .then(data => {
                     res.json(newUrl);
                 })
                 .catch(err => {
                     console.log(err);
-                })            
+                })
         }
         else {
             res.json({
@@ -83,6 +80,6 @@ exports.shortenURL = (req, res) => {
 
     }
     catch (error) {
-        next(error);
+        console.log(error)
     }
 };
