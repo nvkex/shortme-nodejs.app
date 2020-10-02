@@ -14,7 +14,7 @@
 #### Response
 ```json
 {
-  "message" : "short.me - Shorten your URLs"
+    "message" : "short.me - Shorten your URLs"
 }
 ```
 ### 2. Shorten URL
@@ -24,8 +24,8 @@
 #### Body
 ```json
 {
-	"url" : "",
-	"slug" : ""
+    "url" : "",
+    "slug" : ""
 }
 ```
 **Note** : `slug` is an optional key.
@@ -33,8 +33,8 @@
 #### Response
 ```json
 {
-  "slug": "_55CWD",
-  "url": "https://www.google.com"
+    "slug": "_55CWD",
+    "url": "https://www.google.com"
 }
 ```
 
@@ -46,7 +46,7 @@
 #### Response
 ```json
 {
-  "url": "https://www.google.com"
+    "url": "https://www.google.com"
 }
 ```
 
