@@ -17,4 +17,4 @@ const URLSchema = new mongoose.Schema({
     }
 })
 
-module.exports = mongoose.model('User', URLSchema);
+module.exports = mongoose.model('Url', URLSchema);
