@@ -1,2 +1,2 @@
 # short.me
-### URL Shortener REST API
+### URL Shortener API
