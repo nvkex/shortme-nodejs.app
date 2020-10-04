@@ -30,10 +30,18 @@
 ```json
 {
     "url" : "",
+    "len" : 10
     "slug" : ""
 }
 ```
-*Note : `slug` is an optional key. If not provided, it will be auto generated.*
+Field Description:
+
+| Key | Description | Optional | Type |
+| ------------ | ------------ | ------------ | ------------ |
+| `url` | Full URL to be shortened | No | String |
+| `len` | Length of slug to be generated | Yes | Number |
+| `slug` | Custom slug for your URL | Yes | String |
+
 
 #### Response
 ```json
