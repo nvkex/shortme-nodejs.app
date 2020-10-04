@@ -42,12 +42,14 @@ exports.getURL = async (req, res) => {
 exports.shortenURL = (req, res) => {
 
     var { slug, url } = req.body;
+    var slugLength = req.body.len || 6;
+
     try {
         var exists = false;
 
         // If slug is not provided
         if (!slug) {
-            slug = nanoid(6);
+            slug = nanoid(slugLength);
         }
 
         // Check if slug exists
